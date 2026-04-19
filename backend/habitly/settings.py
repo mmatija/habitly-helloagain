@@ -31,6 +31,11 @@ try:
 except KeyError as e:
     raise RuntimeError("Could not find JWT_PUBLIC_KEY in environment") from e
 
+try:
+    JWT_PRIVATE_KEY = config('JWT_PRIVATE_KEY')
+except KeyError as e:
+    raise RuntimeError("Could not find JWT_PRIVATE_KEY in environment") from e
+
 
 # Application definition
 
