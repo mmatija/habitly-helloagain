@@ -2,10 +2,8 @@ from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse
-from rest_framework import viewsets, permissions, mixins
+from rest_framework import viewsets, permissions
 
-from api.authentication import LocalJWTAuthentication
 from api.tokens import generate_token
 
 from .serializers import HabitSerializer, IntentionSerializer, RepetitionSerializer, StackSerializer
@@ -24,22 +22,6 @@ def login(request):
     if user is None:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     return Response({'token': generate_token(user.username)})
-
-
-@api_view(['GET'])
-@authentication_classes([LocalJWTAuthentication])
-@permission_classes([permissions.IsAuthenticated])
-def hello(request):
-    return Response({'message': 'Hello, world!'})
-
-
-def public(request):
-    return HttpResponse("You don't need to be authenticated to see this")
-
-
-@api_view(['GET'])
-def private(request):
-    return HttpResponse("You should not see this message if not authenticated!")
 
 
 class HabitViewSet(viewsets.ModelViewSet):

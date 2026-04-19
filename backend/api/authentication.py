@@ -1,16 +1,9 @@
 import jwt
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-
-
-class DummyUser:
-    """Minimal user-like object that satisfies DRF's IsAuthenticated without a DB lookup."""
-    is_authenticated = True
-
-    def __init__(self, sub):
-        self.sub = sub
 
 
 class LocalJWTAuthentication(BaseAuthentication):
@@ -32,4 +25,9 @@ class LocalJWTAuthentication(BaseAuthentication):
         if not username:
             raise AuthenticationFailed('Token missing sub claim')
 
-        return (DummyUser(sub=username), token)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise AuthenticationFailed('User not found')
+
+        return (user, token)

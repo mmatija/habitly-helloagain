@@ -1,4 +1,5 @@
 import datetime
+from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -30,6 +31,7 @@ def _protected_view(request):
 class LocalJWTAuthenticationTests(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
+        User.objects.create_user(username='testuser')
 
     def test_rejects_request_without_token(self):
         request = self.factory.get('/')
