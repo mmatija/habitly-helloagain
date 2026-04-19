@@ -24,6 +24,7 @@ services:
     restart: unless-stopped
     environment:
       SECRET_KEY: 'django-insecure-dt)jxs-heeq+x$@@m6j%dxy*seqdm@8wk_%y7le_4ai8w4d%uf'
+      ALLOWED_HOSTS: '.0xali.com,localhost'
       DB_NAME: 'habitly'
       DB_USERNAME: 'habitly'
       DB_PASSWORD: 'password'

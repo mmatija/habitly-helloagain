@@ -21,7 +21,10 @@ except KeyError as e:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [".0xali.com"]
+try:
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
+except KeyError as e:
+    raise RuntimeError("Could not find ALLOWED_HOSTS in environment") from e
 
 
 # Application definition
