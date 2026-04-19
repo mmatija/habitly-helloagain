@@ -22,12 +22,20 @@ services:
       dockerfile: Dockerfile
     container_name: habitly-backend
     restart: unless-stopped
+    environment:
+      SECRET_KEY: 'django-insecure-dt)jxs-heeq+x$@@m6j%dxy*seqdm@8wk_%y7le_4ai8w4d%uf'
+      DB_NAME: 'habitly'
+      DB_USERNAME: 'habitly'
+      DB_PASSWORD: 'password'
+      DB_HOST: 'db'
+      DB_PORT: '3306'
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
     working_dir: /app/
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./backend:/app
     networks:
@@ -45,6 +53,11 @@ services:
       MYSQL_USER: 'habitly'
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER -p$$MYSQL_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - db:/var/lib/mysql
     networks:
