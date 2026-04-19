@@ -18,7 +18,6 @@
     "luxon": "^1.27.0",
     "v-calendar": "^3.0.0-alpha.4",
     "vue": "^3.0.0",
-    "vue-auth0-plugin": "^2.4.3",
     "vue-multiselect": "^3.0.0-alpha.2",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.1"

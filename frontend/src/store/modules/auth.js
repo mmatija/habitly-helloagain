@@ -12,6 +12,15 @@ export default {
   getters: {
     isAuthenticated: (state) => state.token !== null,
     token: (state) => state.token,
+    username: (state) => {
+      if (!state.token) return null;
+      try {
+        const payload = JSON.parse(atob(state.token.split('.')[1]));
+        return payload.sub || null;
+      } catch {
+        return null;
+      }
+    },
   },
 
   mutations: {

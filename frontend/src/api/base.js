@@ -1,7 +1,6 @@
-import { AuthenticationState } from 'vue-auth0-plugin';
-import { AuthenticationProperties as auth0 } from 'vue-auth0-plugin';
 import axios from 'axios';
 import config from '@/config';
+
 const instance = axios.create({
   baseURL: config.apiUri,
   headers: {
@@ -9,11 +8,11 @@ const instance = axios.create({
   },
 });
 
-// Request interceptor to append jwt token from store on every request
-instance.interceptors.request.use(async function (config) {
-  if (AuthenticationState.authenticated) {
-    
-    config.headers.Authorization = `Bearer ${await auth0.getTokenSilently()}`;
+// Request interceptor to append jwt token from localStorage on every request
+instance.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

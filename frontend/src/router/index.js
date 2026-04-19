@@ -1,41 +1,56 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { AuthenticationGuard } from 'vue-auth0-plugin';
+import store from '@/store';
 
 import Home from '@/views/Home.vue';
+import Login from '@/views/Login.vue';
+
+const authGuard = (to, from, next) => {
+  if (store.getters['auth/isAuthenticated']) {
+    next();
+  } else {
+    next('/login');
+  }
+};
+
 const routes = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+  },
   {
     path: '/',
     name: 'Home',
     component: Home,
-    beforeEnter: AuthenticationGuard,
+    beforeEnter: authGuard,
   },
   {
     path: '/habits',
     name: 'Habits',
     component: () =>
       import(/* webpackChunkName: "habits" */ '../views/Habits.vue'),
-    beforeEnter: AuthenticationGuard,
+    beforeEnter: authGuard,
   },
   {
     path: '/habits/:id',
     name: 'HabitDetail',
     component: () =>
       import(/* webpackChunkName: "habits" */ '../views/HabitDetail.vue'),
-    beforeEnter: AuthenticationGuard,
+    beforeEnter: authGuard,
   },
   {
     path: '/stacks',
     name: 'Stacks',
     component: () =>
       import(/* webpackChunkName: "stacks" */ '../views/Stacks.vue'),
-    beforeEnter: AuthenticationGuard,
+    beforeEnter: authGuard,
   },
   {
     path: '/intentions',
     name: 'Intentions',
     component: () =>
       import(/* webpackChunkName: "stacks" */ '../views/Intentions.vue'),
-    beforeEnter: AuthenticationGuard,
+    beforeEnter: authGuard,
   },
 ];
 

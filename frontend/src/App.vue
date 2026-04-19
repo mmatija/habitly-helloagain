@@ -1,5 +1,5 @@
 <template>
-  <div id="content" v-if="!loading && authenticated && APIDataInit">
+  <div id="content" v-if="isAuthenticated && APIDataInit">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
       <router-link @click="hideNavbar" class="navbar-brand" to="/" >Habitly</router-link>
@@ -60,10 +60,10 @@
             >
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto" v-if="!loading && authenticated">
+        <ul class="navbar-nav ms-auto" v-if="isAuthenticated">
           <li class="nav-item">
             <div class="navbar-text">
-              <span class="text-light">{{ user.nickname }}</span>
+              <span class="text-light">{{ username }}</span>
               <button class="btn btn-link btn-sm ms-1" @click.prevent="logout">Logout</button>
             </div>
           </li>
@@ -97,7 +97,7 @@
     </div>
     </footer>
   </div>
-  <div id="loading" v-else>
+  <div id="loading" v-else-if="currentRouteName !== 'Login'">
     <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh">
       <div class="spinner-border text-dark" role="status">
         <span class="visually-hidden">{{ loadingMessage ? loadingMessage : "Loading..." }}</span>
@@ -105,12 +105,15 @@
       <div class="mt-1"><span role="alert" class="text-dark">{{ loadingMessage ? loadingMessage : "Loading..." }}</span></div>
     </div>
   </div>
+  <div v-else>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import { computed, inject, ref, watchEffect, nextTick } from 'vue';
-import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
+import { computed, ref, watchEffect, nextTick } from 'vue';
+ import { useStore } from 'vuex';
+ import { useRoute, useRouter } from 'vue-router';
 import 'bootstrap/js/dist/collapse';
 import Collapse from 'bootstrap/js/dist/collapse';
 export default {
@@ -118,10 +121,9 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-    const auth = inject('auth');
+    const router = useRouter();
 
     const APIDataInit = ref(false);
-
     const loadingMessage = ref(null);
 
     /* Navbar inner div ref to make it collapsable */
@@ -136,12 +138,17 @@ export default {
       bsCollapse.value.hide();
     };
 
+    const isAuthenticated = computed(() => store.getters['auth/isAuthenticated']);
+    const username = computed(() => store.getters['auth/username']);
+
     const logout = () => {
-      auth.logout();
-      }
+      store.dispatch('auth/logout');
+      router.push('/login');
+    };
+
     /* Load API Data */
     watchEffect(async () => {
-      if (!auth.loading && auth.authenticated) {
+      if (isAuthenticated.value) {
         loadingMessage.value = "Loading existing data from server...";
         try {
           await store.dispatch('habits/refresh');
@@ -178,11 +185,10 @@ export default {
       hideNavbar,
       APIDataInit,
       loadingMessage,
-      loading: computed(() => auth.loading),
-      authenticated: computed(() => auth.authenticated),
+      isAuthenticated,
+      username,
       currentRouteName: computed(() => route.name),
-      user: computed(() => auth.user),
-      logout: logout
+      logout,
     };
   },
 };
