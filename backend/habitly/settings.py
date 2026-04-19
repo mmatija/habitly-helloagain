@@ -1,7 +1,6 @@
 from decouple import config
 
 from pathlib import Path
-import auth_config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,7 +48,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'api',
-    'auth0authorization',
     'django_extensions',
 ]
 
@@ -173,14 +171,6 @@ REST_FRAMEWORK = {
 }
 
 
-JWT_AUTH = {
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'auth0authorization.utils.jwt_get_username_from_payload_handler',
-    'JWT_DECODE_HANDLER': 'auth0authorization.utils.jwt_decode_token',
-    'JWT_ALGORITHM': 'RS256',
-    'JWT_AUDIENCE': auth_config.API_IDENTIFIER,
-    'JWT_ISSUER': auth_config.AUTH0_DOMAIN,
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-}
 
 
 try:
