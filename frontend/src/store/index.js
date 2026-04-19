@@ -1,6 +1,7 @@
 import habits from './modules/habits';
 import stacks from './modules/stacks';
 import intentions from './modules/intentions';
+import auth from './modules/auth';
 import { createStore } from 'vuex';
 
 export default createStore({
@@ -10,5 +11,5 @@ export default createStore({
   getters: {},
   mutations: {},
   actions: {},
-  modules: { habits, stacks, intentions },
+  modules: { habits, stacks, intentions, auth },
 });
