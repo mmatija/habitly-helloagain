@@ -1,6 +1,10 @@
 import jwt
 from django.test import TestCase, override_settings
-from rest_framework.test import APIClient
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.test import APIRequestFactory
+from auth0authorization.utils import LocalJWTAuthentication
 
 # Pre-generated 512-bit RSA key pairs for testing only — not used in production.
 TEST_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
@@ -38,24 +42,31 @@ def make_token(private_key=None):
     return token
 
 
+@api_view(['GET'])
+@authentication_classes([LocalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def _protected_view(request):
+    return Response({'ok': True})
+
+
 @override_settings(JWT_PUBLIC_KEY=TEST_PUBLIC_KEY)
-class HelloEndpointTests(TestCase):
+class LocalJWTAuthenticationTests(TestCase):
     def setUp(self):
-        self.client = APIClient()
+        self.factory = APIRequestFactory()
 
-    def test_hello_returns_401_without_token(self):
-        response = self.client.get('/api/hello/')
+    def test_rejects_request_without_token(self):
+        request = self.factory.get('/')
+        response = _protected_view(request)
         self.assertEqual(response.status_code, 401)
 
-    def test_hello_returns_401_with_wrong_key(self):
+    def test_rejects_token_signed_with_unknown_key(self):
         token = make_token(private_key=MALICIOUS_PARTY_PRIVATE_KEY)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-        response = self.client.get('/api/hello/')
+        request = self.factory.get('/', HTTP_AUTHORIZATION=f'Bearer {token}')
+        response = _protected_view(request)
         self.assertEqual(response.status_code, 401)
 
-    def test_hello_returns_200_with_valid_token(self):
+    def test_accepts_token_signed_with_trusted_key(self):
         token = make_token()
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-        response = self.client.get('/api/hello/')
+        request = self.factory.get('/', HTTP_AUTHORIZATION=f'Bearer {token}')
+        response = _protected_view(request)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'message': 'Hello, world!'})
