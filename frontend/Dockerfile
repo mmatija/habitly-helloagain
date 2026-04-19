@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:16-alpine
 
 RUN npm install -g @vue/cli
 # make the 'app' folder the current working directory
