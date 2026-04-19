@@ -1,9 +1,19 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, mixins
 
+from auth0authorization.utils import LocalJWTAuthentication
+
 from .serializers import HabitSerializer, IntentionSerializer, RepetitionSerializer, StackSerializer
 from .models import Habit, Intention, Repetition, Stack
+
+
+@api_view(['GET'])
+@authentication_classes([LocalJWTAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def hello(request):
+    return Response({'message': 'Hello, world!'})
 
 
 def public(request):

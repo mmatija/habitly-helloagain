@@ -25,6 +25,7 @@ services:
     environment:
       SECRET_KEY: 'django-insecure-dt)jxs-heeq+x$@@m6j%dxy*seqdm@8wk_%y7le_4ai8w4d%uf'
       ALLOWED_HOSTS: '.0xali.com,localhost'
+      JWT_PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALi9i9aYA1ktUOE2oYFq7M0V8RWe84gC\nALAj0DxnFiOfJ3pTDxZ1JA+ag6gFCCWtiKMSjDwkDX6C6bK87hdnFU8CAwEAAQ==\n-----END PUBLIC KEY-----"
       DB_NAME: 'habitly'
       DB_USERNAME: 'habitly'
       DB_PASSWORD: 'password'

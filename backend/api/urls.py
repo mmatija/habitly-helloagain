@@ -17,5 +17,6 @@ router.register(r'repetitions', views.RepetitionViewSet, basename="Repetition")
 
 
 urlpatterns = [
+    path('hello/', views.hello),
     path('', include(router.urls)),
 ]

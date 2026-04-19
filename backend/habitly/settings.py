@@ -26,6 +26,11 @@ try:
 except KeyError as e:
     raise RuntimeError("Could not find ALLOWED_HOSTS in environment") from e
 
+try:
+    JWT_PUBLIC_KEY = config('JWT_PUBLIC_KEY')
+except KeyError as e:
+    raise RuntimeError("Could not find JWT_PUBLIC_KEY in environment") from e
+
 
 # Application definition
 
