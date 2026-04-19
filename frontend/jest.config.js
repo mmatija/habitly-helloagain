@@ -6,8 +6,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    'api_config\\.json$': '<rootDir>/tests/__mocks__/apiConfigMock.js',
-
   },
+  setupFiles: ['<rootDir>/tests/setup.js'],
   testMatch: ['**/tests/**/*.spec.js'],
 };
