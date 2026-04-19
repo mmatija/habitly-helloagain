@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -183,6 +183,7 @@ JWT_AUTH = {
 }
 
 
-CORS_ORIGIN_WHITELIST = (
-    'https://0xali.com',
-)
+try:
+    CORS_ORIGIN_WHITELIST = tuple(config('CORS_ORIGIN_WHITELIST').split(','))
+except KeyError as e:
+    raise RuntimeError("Could not find CORS_ORIGIN_WHITELIST in environment") from e
