@@ -1,4 +1,5 @@
 import jwt
+import datetime
 from django.test import TestCase, override_settings
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -34,9 +35,12 @@ Ycyk7urlrUPUFph3+CZPwKZ4ypU375rnj7rdErJM
 -----END RSA PRIVATE KEY-----"""
 
 
-def make_token(private_key=None):
+def make_token(private_key=None, exp=None):
     private_key = private_key or TEST_PRIVATE_KEY
-    token = jwt.encode({'sub': 'testuser'}, private_key, algorithm='RS256')
+    if exp is None:
+        exp = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+    payload = {'sub': 'testuser', 'exp': exp}
+    token = jwt.encode(payload, private_key, algorithm='RS256')
     if isinstance(token, bytes):
         token = token.decode('utf-8')
     return token
@@ -61,6 +65,12 @@ class LocalJWTAuthenticationTests(TestCase):
 
     def test_rejects_token_signed_with_unknown_key(self):
         token = make_token(private_key=MALICIOUS_PARTY_PRIVATE_KEY)
+        request = self.factory.get('/', HTTP_AUTHORIZATION=f'Bearer {token}')
+        response = _protected_view(request)
+        self.assertEqual(response.status_code, 401)
+
+    def test_rejects_expired_token(self):
+        token = make_token(exp=datetime.datetime(2000, 1, 1))
         request = self.factory.get('/', HTTP_AUTHORIZATION=f'Bearer {token}')
         response = _protected_view(request)
         self.assertEqual(response.status_code, 401)
