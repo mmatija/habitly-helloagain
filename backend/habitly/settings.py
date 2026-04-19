@@ -27,12 +27,12 @@ except KeyError as e:
     raise RuntimeError("Could not find ALLOWED_HOSTS in environment") from e
 
 try:
-    JWT_PUBLIC_KEY = config('JWT_PUBLIC_KEY')
+    JWT_PUBLIC_KEY = config('JWT_PUBLIC_KEY').replace('\\n', '\n')
 except KeyError as e:
     raise RuntimeError("Could not find JWT_PUBLIC_KEY in environment") from e
 
 try:
-    JWT_PRIVATE_KEY = config('JWT_PRIVATE_KEY')
+    JWT_PRIVATE_KEY = config('JWT_PRIVATE_KEY').replace('\\n', '\n')
 except KeyError as e:
     raise RuntimeError("Could not find JWT_PRIVATE_KEY in environment") from e
 
