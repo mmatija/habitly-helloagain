@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
-from auth0authorization.utils import LocalJWTAuthentication
+from api.authentication import LocalJWTAuthentication
 
 # Pre-generated 512-bit RSA key pairs for testing only — not used in production.
 TEST_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----

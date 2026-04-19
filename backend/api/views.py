@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, mixins
 
-from auth0authorization.utils import LocalJWTAuthentication
+from api.authentication import LocalJWTAuthentication
 
 from .serializers import HabitSerializer, IntentionSerializer, RepetitionSerializer, StackSerializer
 from .models import Habit, Intention, Repetition, Stack
